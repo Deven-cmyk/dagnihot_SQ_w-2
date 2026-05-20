@@ -16,8 +16,8 @@ let player = {
   y: 300,
   vx: 0,
   vy: 0,
-  width: 32,
-  height: 48,
+  width: 48,
+  height: 72,
   speed: 0.4,
   maxSpeed: 3,
   jumpForce: -11,
@@ -31,6 +31,14 @@ const GRAVITY = 0.55;
 
 // Platforms array - blue platforms positioned to create upward progression
 let platforms = [];
+
+let door = {
+  x: 680,
+  y: 0,
+  width: 60,
+  height: 90,
+  active: false,
+};
 
 // ============================================================
 // preload() - Load images before setup runs
@@ -52,10 +60,10 @@ function setup() {
   // Ground platforms (starting area)
   platforms.push({
     x: 0,
-    y: 520,
+    y: 500,
     width: 800,
-    height: 80,
-    color: [100, 150, 200],
+    height: 50,
+    color: [90, 50, 30],
     isGolden: false,
   });
 
@@ -63,62 +71,63 @@ function setup() {
   platforms.push({
     x: 100,
     y: 460,
-    width: 120,
-    height: 20,
+    width: 100,
+    height: 16,
     color: [70, 150, 220],
     isGolden: false,
   });
   platforms.push({
     x: 350,
     y: 400,
-    width: 120,
-    height: 20,
+    width: 100,
+    height: 16,
     color: [70, 150, 220],
     isGolden: false,
   });
   platforms.push({
     x: 150,
     y: 340,
-    width: 120,
-    height: 20,
+    width: 100,
+    height: 16,
     color: [70, 150, 220],
     isGolden: false,
   });
   platforms.push({
     x: 500,
     y: 280,
-    width: 120,
-    height: 20,
+    width: 100,
+    height: 16,
     color: [70, 150, 220],
     isGolden: false,
   });
   platforms.push({
     x: 250,
     y: 220,
-    width: 120,
-    height: 20,
+    width: 100,
+    height: 16,
     color: [70, 150, 220],
     isGolden: false,
   });
   platforms.push({
     x: 550,
     y: 160,
-    width: 120,
-    height: 20,
+    width: 100,
+    height: 16,
     color: [70, 150, 220],
     isGolden: false,
   });
 
   // GOLDEN PLATFORM - triggers 2x jump (special mechanic)
   platforms.push({
-    x: 300,
+    x: 310,
     y: 80,
-    width: 200,
-    height: 30,
+    width: 180,
+    height: 22,
     color: [255, 215, 0],
     isGolden: true,
   });
 
+  door.y = platforms[0].y - door.height;
   player.y = platforms[0].y - player.height;
 }
 
@@ -137,6 +146,8 @@ function draw() {
     applyPhysics();
     checkPlatformCollisions();
     drawPlatforms();
+    drawDoor();
+    checkDoorEntry();
     drawPlayer();
     drawHUD();
   } else if (gameState === "won") {
@@ -231,13 +242,31 @@ function checkPlatformCollisions() {
       if (platform.isGolden) {
         player.onGoldenPlatform = true;
         jumpMultiplier = 2; // 2x jump height
-
-        // Win condition - check if at top
-        if (player.y < height / 3) {
-          gameState = "won";
-        }
       }
     }
+
+    if (player.onGoldenPlatform) {
+      door.active = true;
+    }
+  }
+}
+
+function checkDoorEntry() {
+  if (!door.active || gameState !== "playing") {
+    return;
+  }
+
+  let playerLeft = player.x - player.width / 2;
+  let playerRight = player.x + player.width / 2;
+  let playerBottom = player.y + player.height;
+
+  if (
+    playerBottom >= door.y + 10 &&
+    playerLeft < door.x + door.width &&
+    playerRight > door.x &&
+    player.onGround
+  ) {
+    gameState = "won";
   }
 }
 
@@ -249,30 +278,52 @@ function drawPlatforms() {
   for (let platform of platforms) {
     if (platform.isGolden) {
       // Golden platform with shining effect
-      let shimmer = sin(frameCount * 0.05) * 30 + 20; // oscillating brightness
-      fill(255, 215 + shimmer, 0);
+      let shimmer = sin(frameCount * 0.08) * 25;
+      fill(255, 215 + shimmer, 80);
+      stroke(255, 220, 80);
+      strokeWeight(2);
+      rect(platform.x, platform.y, platform.width, platform.height, 6);
 
-      // Draw glow/halo
-      noFill();
-      stroke(255, 215, 0);
-      strokeWeight(3);
-      ellipse(
-        platform.x + platform.width / 2,
-        platform.y + platform.height / 2,
-        platform.width + 20,
-        platform.height + 20,
-      );
-
-      // Draw platform
-      fill(255, 215, 0);
+      // Sparkles on the golden platform
       noStroke();
+      fill(255, 255, 180, 180);
+      for (let i = 0; i < 3; i++) {
+        let sparkleX = platform.x + 20 + i * 50;
+        let sparkleY = platform.y + random(-6, platform.height - 6);
+        ellipse(sparkleX, sparkleY, 6, 6);
+      }
     } else {
       fill(platform.color);
       noStroke();
+      rect(platform.x, platform.y, platform.width, platform.height, 4);
     }
-
-    rect(platform.x, platform.y, platform.width, platform.height);
   }
+}
+
+// ============================================================
+// drawDoor()
+// Draws the door once the golden platform has been reached
+// ============================================================
+function drawDoor() {
+  if (!door.active) {
+    return;
+  }
+
+  push();
+  fill(80, 50, 20);
+  stroke(180, 120, 70);
+  strokeWeight(5);
+  rect(door.x, door.y, door.width, door.height, 8);
+
+  // Door panel details
+  noStroke();
+  fill(120, 80, 40);
+  rect(door.x + 10, door.y + 10, door.width - 20, door.height - 20, 6);
+
+  // Golden doorknob
+  fill(255, 215, 0);
+  ellipse(door.x + door.width - 16, door.y + door.height / 2, 10, 10);
+  pop();
 }
 
 // ============================================================
@@ -284,19 +335,14 @@ function drawPlayer() {
     image(
       characterImg,
       player.x - player.width / 2,
-      player.y - player.height,
+      player.y,
       player.width,
       player.height,
     );
   } else {
     // Fallback rectangle if image not loaded
     fill(255, 100, 100);
-    rect(
-      player.x - player.width / 2,
-      player.y - player.height,
-      player.width,
-      player.height,
-    );
+    rect(player.x - player.width / 2, player.y, player.width, player.height);
   }
 }
 
@@ -305,19 +351,27 @@ function drawPlayer() {
 // Displays game instructions and jump multiplier indicator
 // ============================================================
 function drawHUD() {
-  fill(0);
+  textStyle(BOLD);
   textSize(16);
   textAlign(LEFT);
+  fill(255);
+  stroke(0);
+  strokeWeight(3);
   text("MOVE: Arrow Keys or WASD   JUMP: W or Up Arrow", 16, 30);
 
   if (player.onGoldenPlatform) {
     fill(255, 215, 0);
+    stroke(30, 20, 0);
+    strokeWeight(4);
     textSize(20);
     text("2X JUMP POWER!", 16, 60);
-    fill(0);
+    fill(255);
+    stroke(0);
+    strokeWeight(3);
     textSize(14);
-    text("Press Jump to exit!", 16, 85);
+    text("A shiny door appears on the ground below! Enter it to win.", 16, 85);
   }
+  noStroke();
 }
 
 // ============================================================
@@ -421,6 +475,7 @@ function keyPressed() {
       player.vy = 0;
       player.onGround = false;
       player.onGoldenPlatform = false;
+      door.active = false;
     }
   }
 }
