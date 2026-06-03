@@ -29,14 +29,18 @@ To run the sketch locally, open `index.html` in Google Chrome using Live Server 
 
 ## Assets
 
-| File             | Source                                                                                                                                                        |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `background.jpg` | [2D Pixel Art Platformer Biome - Japan](https://assetstore.unity.com/packages/2d/environments/2d-pixel-art-platformer-biome-japan-260160) (Unity Asset Store) |
-| `character.png`  | [Sushi Warrior 64x64 Pixel Samurai](https://ninjagame-dev.itch.io/sushi-warrior-64x64-pixel-samurai) (itch.io)                                                |
+| File             | Source                                    |
+| ---------------- | ----------------------------------------- |
+| `background.jpg` | 2D Pixel Art Platformer Biome - Japan [1] |
+| `character.png`  | Sushi Warrior 64x64 Pixel Samurai [2]     |
 
 ## References
 
-Processing Foundation. (n.d.). _p5.js reference_. Retrieved from https://p5js.org/reference/
+[1] A Creative. n.d. _2D Pixel Art Platformer Biome - Japan_. Unity Asset Store. Retrieved from https://assetstore.unity.com/packages/2d/environments/2d-pixel-art-platformer-biome-japan-260160
+
+[2] ninjagame-dev. n.d. _Sushi Warrior 64x64 Pixel Samurai_. itch.io. Retrieved from https://ninjagame-dev.itch.io/sushi-warrior-64x64-pixel-samurai
+
+[3] Processing Foundation. n.d. _p5.js reference_. Retrieved from https://p5js.org/reference/
 
 ## Author
 
