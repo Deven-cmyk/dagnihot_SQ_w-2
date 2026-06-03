@@ -4,6 +4,12 @@
 
 This project is a p5.js platformer game inspired by the Sushi Go theme. The player controls a character and must jump across a series of platforms to reach the top of the level.
 
+The level is designed using a custom background image and themed platform colors. Once the player reaches the top golden platform, a special mechanic is triggered where a door appears at the bottom of the screen. The player must then enter the door to complete the game.
+
+## Setup and Interaction Instructions
+
+To run the sketch locally, open `index.html` in Google Chrome using Live Server (Right-click `index.html` in Visual Studio Code and select **Open with Live Server**).
+
 **Controls:**
 
 - **Spacebar / Up Arrow / W** → Jump
